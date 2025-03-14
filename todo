@@ -1,0 +1,57 @@
+import tkinter as tk  
+from tkinter import messagebox 
+
+def add_task():
+    task = task_entry.get() 
+    if task:  
+        tasks_listbox.insert(tk.END, task)  
+        task_entry.delete(0, tk.END)  
+    else:
+        messagebox.showwarning("Task cannot be empty")  
+
+def remove_task():
+    try:
+        selected_task_index = tasks_listbox.curselection()[0]  
+        tasks_listbox.delete(selected_task_index)  
+    except IndexError:  
+        messagebox.showwarning("Please select a task to remove")
+
+def save_tasks():
+    tasks = tasks_listbox.get(0, tk.END)  
+    with open("tasks.txt", "w") as file:
+        for task in tasks:
+            file.write(task + "\n")  
+    messagebox.showinfo("Saved successfully") 
+
+def load_tasks():
+    try:
+        with open("tasks.txt", "r") as file: 
+            tasks = file.readlines()  
+            for task in tasks:
+                tasks_listbox.insert(tk.END, task.strip()) 
+    except FileNotFoundError:
+        pass 
+
+root = tk.Tk()
+root.title("To-Do List") 
+root.geometry("600x600")  
+
+task_entry = tk.Entry(root, width=60, background="yellow")  
+task_entry.pack(pady=30)  
+
+add_button = tk.Button(root, text="Add Task", command=add_task, background="blue")
+add_button.pack()
+
+remove_button = tk.Button(root, text="Remove Task", command=remove_task, background="blue")
+remove_button.pack()
+
+save_button = tk.Button(root, text="Save Tasks", command=save_tasks,  background="blue")
+save_button.pack()
+
+tasks_listbox = tk.Listbox(root, width=70, height=35, background="pink")
+tasks_listbox.pack(pady=30)  
+
+load_tasks()
+
+root.mainloop()
+  
